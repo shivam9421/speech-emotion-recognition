@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import joblib
 import soundfile as sf
 import tempfile
+from pydub import AudioSegment
 # ── Page Config ──
 st.set_page_config(
     page_title="Speech Emotion Recognition",
@@ -59,6 +60,17 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+
+def convert_to_wav(uploaded_file, f):
+    ext = uploaded_file.name.split('.')[-1].lower()
+    if ext != 'wav':
+        audio = AudioSegment.from_file(f_path, format=ext)
+        wav_path = f_path.replace(f'.{ext}', '.wav')
+        audio.export(wav_path, format='wav')
+        return wav_path
+    return f_path
+
+
 def extract_fixed_features(file_path,duration=3):
     sr=22050
     max_len=int (duration*sr)
@@ -88,8 +100,8 @@ pipeline=joblib.load('ser_pipeline.pkl')
 st.markdown('<p class="title">🎙️ Speech Emotion Recognition</p>', unsafe_allow_html=True)
 st.markdown('<p class="subtitle">Upload a WAV file and let AI detect the emotion!</p>', unsafe_allow_html=True)
 #----Upload-------------
-uploaded_file=st.file_uploader("",type=['wav'],label_visibility="collapsed")
-# Upload ke UPAR yeh add karo
+uploaded_file = st.file_uploader("", type=['wav', 'mp3', 'ogg', 'm4a', 'flac'],label_visibility="collapsed")
+
 if uploaded_file is  None:
     st.markdown("""
         <div style="background: linear-gradient(135deg, #1e1e2e, #2a2a3e); 
@@ -119,9 +131,11 @@ if uploaded_file is  None:
         </div>
     """, unsafe_allow_html=True)
 if uploaded_file is not None:
-    with tempfile.NamedTemporaryFile(delete=False,suffix='.wav') as f:
+    with tempfile.NamedTemporaryFile(delete=False, suffix=f'.{uploaded_file.name.split(".")[-1]}') as f:
         f.write(uploaded_file.read())
-        f_path=f.name
+        f_path = f.name
+    f_path = convert_to_wav(uploaded_file, f_path)
+
     #audio load
     audio_data,sampling_rate=librosa.load(f_path,sr=22050)
     #-----audio player---
