@@ -1,8 +1,0 @@
-streamlit
-librosa
-scikit-learn
-numpy
-matplotlib
-soundfile
-joblib
-pyaudioop
