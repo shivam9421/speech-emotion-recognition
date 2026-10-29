@@ -28,7 +28,7 @@ pipeline = joblib.load('ser_pipeline.pkl')
 st.title('🎙️ Speech Emotion Recognition')
 st.write('Audio upload karo - emotion detect ho jaayega!')
 
-uploaded_file = st.file_uploader("WAV file upload karo", type=['wav'])
+uploaded_file = st.file_uploader("File upload karo", type=['wav'])
 st.audio(uploaded_file)
 
 if uploaded_file is not None:
