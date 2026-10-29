@@ -1,110 +1,17 @@
-
-
-
-
-
-
 import numpy as np
-import pandas as pd
 import kagglehub
 import os
 import glob
 import librosa
-import librosa.display
-import matplotlib.pyplot as plt
 path = kagglehub.dataset_download("uwrfkaggler/ravdess-emotional-speech-audio")
-print("Dataset download ho gaya is folder mein:", path)
 
 #Folder ke andar ghus kar saari .wav files ki list nikalte hain
 # RAVDESS mein Actor_01, Actor_02 jaise subfolders hote hain, isliye '**' use kiya hai
 file_list= glob.glob(os.path.join(path, '**', '*.wav'), recursive=True)
-
-# 3. Check karte hain ki files mili ya nahi, aur pehli file ko plot karte hain
-if len(file_list) > 0:
-    sample_file = file_list[0] # Test karne ke liye pehli file utha li
-    print(f"Total files mili: {len(file_list)}")
-    print(f"Hum is file ko test kar rahe hain: {os.path.basename(sample_file)}")
-
-    # Ab librosa mein actual file ka path pass hoga
-    data, sampling_rate = librosa.load(sample_file)
-
-    # 4. Audio wave dekhne ke liye Plot karein
-    plt.figure(figsize=(10, 4))
-    librosa.display.waveshow(data, sr=sampling_rate)
-    plt.title(f'Audio Waveform - {os.path.basename(sample_file)}')
-    plt.show()
-else:
-    print("Oops! Folder mein koi .wav file nahi mili. Ek baar check karo ki download sahi se hua ya nahi.")
-
-
-# 1. Apne dataset se koi bhi ek audio file ka path yahan dalo
-sample_file = "/kaggle/input/datasets/uwrfkaggler/ravdess-emotional-speech-audio/Actor_01/03-01-01-01-01-01-01.wav"
-# 2. Audio load kiya
-audio_data, sr = librosa.load(sample_file, sr=22050)
-
-# 3. Mel-Spectrogram nikaala aur use Decibels (dB) mein badla
-mel = librosa.feature.melspectrogram(y=audio_data, sr=sr, n_mels=128)
-mel_db = librosa.power_to_db(mel, ref=np.max)
-
-# 4. Matplotlib Graph Plotting Setup
-plt.figure(figsize=(12, 8))
-
-# ---- GRAPH 1: WAVEPLOT ----
-plt.subplot(2, 1, 1) # Do graphs mein se pehla graph
-librosa.display.waveshow(audio_data, sr=sr, color="royalblue")
-plt.title("1. Waveplot (Aawaz ki Loudness aur Waves)", fontsize=14, fontweight='bold')
-plt.xlabel("Time (Seconds)")
-plt.ylabel("Amplitude (Loudness)")
-
-# ---- GRAPH 2: MEL-SPECTROGRAM ----
-plt.subplot(2, 1, 2) # Do graphs mein se doosra graph
-# cmap='viridis' se ranges rang-birangi (yellow/purple) dikhengi
-img = librosa.display.specshow(mel_db, sr=sr, x_axis='time', y_axis='mel', cmap='viridis')
-plt.title("2. Mel-Spectrogram (Aawaz ka Digital Fingerprint)", fontsize=14, fontweight='bold')
-plt.xlabel("Time (Seconds)")
-plt.ylabel("Frequency (Hz - Mel Scale)")
-
-
-# Side mein colorbar dikhane ke liye jo batayega kaunsa rang kitna loud hai
-plt.colorbar(img, format="%+2.0f dB")
-
-# Layout saaf karne ke liye
-plt.tight_layout()
-plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
 def extract_fixed_features(file_path, duration=3):
     sr = 22050
     max_len = sr * duration
     audio_data, _ = librosa.load(file_path, sr=sr)
-
-    # Audio Length Fix (Padding/Truncating)
-    # if len(audio_data) < max_len:
-    #     audio_data = np.pad(audio_data, (0, max_len - len(audio_data)), 'constant')
-    # else:
-    #     audio_data = audio_data[:max_len]
 
     # ML Feature (MFCC) MFCC (Mel-Frequency Cepstral Coefficients)
     mfccs = librosa.feature.mfcc(y=audio_data, sr=sr, n_mfcc=40)
@@ -115,14 +22,6 @@ def extract_fixed_features(file_path, duration=3):
     dl_features = librosa.power_to_db(mel, ref=np.max)
 
     return ml_features, dl_features
-
-
-
-
-
-
-
-
 
 emotions_map = {
     '01': 'neutral', '02': 'calm', '03': 'happy', '04': 'sad',
@@ -149,14 +48,6 @@ for file_path in file_list:
       except Exception as e:
                 print(f"Error reading {filename}: {e}")
 
-
-
-
-
-
-len(y)
-
-
 from collections import Counter
 
 emotion_counts = Counter(y)
@@ -165,8 +56,6 @@ for emotion, count in sorted(emotion_counts.items()):
 
 print(f"\nTotal files: {sum(emotion_counts.values())}")
 
-
-import numpy as np
 from sklearn.model_selection import train_test_split
 
 
