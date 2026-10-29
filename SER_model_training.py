@@ -15,7 +15,7 @@ from sklearn.preprocessing import FunctionTransformer, StandardScaler
 path = kagglehub.dataset_download("uwrfkaggler/ravdess-emotional-speech-audio")
 print("Dataset download ho gaya is folder mein:", path)
 
-# RAVDESS mein Actor_01, Actor_02 jaise subfolders hote hain, isliye '**' use kiya hai
+#    IN RAVDESS  DATA  WE ONY  FIND WAV FILES  SO  WE  WILL  ONLY  LOOK  FOR  WAV FILES
 file_list = glob.glob(os.path.join(path, '**', '*.wav'), recursive=True)
 
 
@@ -70,7 +70,7 @@ X_train_ml, X_test_ml, y_train, y_test = train_test_split(
     y_array,
     test_size=0.2,
     random_state=42,
-    stratify=y_array  # Balance barabar rakhne ke liye!
+    stratify=y_array  # Balancing the classes in train and test sets
 )
 
 print(f"Train data shape: {X_train_ml.shape}")
